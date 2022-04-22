@@ -1,7 +1,8 @@
 package examples
 import java.io.File
 import akka.actor.ActorSystem
-import akka.stream.{ActorMaterializer, ClosedShape}
+import akka.stream.scaladsl.BroadcastHub.sink
+import akka.stream.{ActorMaterializer, ClosedShape, FlowShape}
 import akka.stream.scaladsl.{Flow, GraphDSL, RunnableGraph, Sink, Source}
 
 class ExampleGraph {
@@ -28,5 +29,24 @@ class ExampleGraph {
 
       ClosedShape
   })
+
+
+  //aggreate flow using GraphDSL
+  val combinedFlow = Flow.fromGraph(GraphDSL.create() { implicit builder =>
+    import GraphDSL.Implicits._
+
+    val mapper = builder.add(Flow[String].map(new File(_)))
+    val existsFilter = builder.add(Flow[File].filter(_.exists()))
+    val lengthZeroFilter = builder.add(Flow[File].filter(_.length() != 0))
+
+    mapper ~> existsFilter ~> lengthZeroFilter
+
+    FlowShape(mapper.in, lengthZeroFilter.out)
+  })
+
+//  val stream = Source(List("a"))
+//    .via(combinedFlow)
+//    .to(sink)
+
 
 }

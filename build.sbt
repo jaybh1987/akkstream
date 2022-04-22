@@ -79,3 +79,7 @@ libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % 
 
 val AkkaVersion = "2.6.18"
 libraryDependencies += "com.typesafe.akka" %% "akka-stream" % AkkaVersion
+
+
+// https://mvnrepository.com/artifact/org.apache.spark/spark-core
+libraryDependencies += "org.apache.spark" %% "spark-core" % "3.2.0"
